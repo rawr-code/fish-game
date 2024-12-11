@@ -23,9 +23,15 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@atoms": ["./src/components/atoms/index.ts"],
-      "@utils": ["./src/utils/index.ts"]
+      "@assets": ["./src/game/assets/index.ts"],
+      "@constants": ["./src/game/constants/index.ts"],
+      "@components": ["./src/game/components/index.ts"],
+      "@entities": ["./src/game/entities/index.ts"],
+      "@scenes": ["./src/game/scenes/index.ts"],
+      "@systems": ["./src/game/systems/index.ts"],
+      "@config": ["./src/game/config/index.ts"],
+      "@utils": ["./src/game/utils/index.ts"],
+      "@types": ["./src/game/types/index.ts"]
     }
   },
   "include": ["src"],

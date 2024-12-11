@@ -1,4 +1,6 @@
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import { frameConfig } from '@config';
+
 import StartGame from './main';
 import { EventBus } from './EventBus';
 
@@ -17,7 +19,7 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
 
     useLayoutEffect(() => {
       if (game.current === null) {
-        game.current = StartGame('game-container');
+        game.current = StartGame(frameConfig.canvasID);
 
         if (typeof ref === 'function') {
           ref({ game: game.current, scene: null });
@@ -53,6 +55,6 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
       };
     }, [currentActiveScene, ref]);
 
-    return <div id="game-container"></div>;
+    return <div id={frameConfig.canvasID} />;
   },
 );
