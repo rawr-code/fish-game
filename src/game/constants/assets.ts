@@ -8,11 +8,11 @@ const CONFIG = {
 
 const SPRITES = {
   FISH: {
-    GREEN: '072',
-    BLUE: '076',
-    RED: '078',
-    YELLOW: '080',
-    BROWN: '100',
+    GREEN: '073',
+    BLUE: '077',
+    RED: '079',
+    YELLOW: '081',
+    BROWN: '101',
   },
   PLANTS: {
     CORAL: 'fishTile_010',
