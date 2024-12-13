@@ -1,9 +1,10 @@
 import { MainScene, PreloadScene } from '@scenes';
+import frameConfig from './frameConfig';
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: frameConfig.width,
+  height: frameConfig.height,
   physics: {
     default: 'arcade',
     arcade: {

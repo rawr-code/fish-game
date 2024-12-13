@@ -55,6 +55,15 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
       };
     }, [currentActiveScene, ref]);
 
-    return <div id={frameConfig.canvasID} />;
+    return (
+      <div
+        id={frameConfig.canvasID}
+        style={{
+          display: 'flex',
+          borderRadius: 12,
+          overflow: 'hidden',
+        }}
+      />
+    );
   },
 );
