@@ -6,7 +6,7 @@ import {
   SpriteComponent,
   WaveMovementComponent,
 } from '@components';
-import { ASSETS, FISH_TYPES } from '@constants';
+import { ASSETS, FISH_TYPES, FishType } from '@constants';
 
 import { System } from './System';
 
@@ -43,6 +43,7 @@ export class SpawnSystem extends System {
       ASSETS.ATLAS.KEY,
       fishType.sprite,
     );
+
     // Mejorar la calidad del renderizado
     sprite.setOrigin(0.5);
     sprite.setScale(fishType.scale);
@@ -59,7 +60,7 @@ export class SpawnSystem extends System {
     sprite.setInteractive({ useHandCursor: true, pixelPerfect: true });
 
     // Configurar eventos de interacción
-    this.setupInteractiveEvents(sprite);
+    this.setupInteractiveEvents(sprite, fishType);
 
     // Bounding box y punto central para debug
     if (this.config.debugSprites) {
@@ -88,49 +89,93 @@ export class SpawnSystem extends System {
       });
     }
 
-    // Añadir componentes
+    // Generar valores aleatorios para el movimiento ondulante
+    const amplitude =
+      Math.random() * (fishType.amplitude.max - fishType.amplitude.min) +
+      fishType.amplitude.min;
+
+    const frequency =
+      Math.random() * (fishType.frequency.max - fishType.frequency.min) +
+      fishType.frequency.min;
+
     const speed =
       Math.random() * (fishType.speed.max - fishType.speed.min) +
       fishType.speed.min;
 
     fish.addComponent(new SpriteComponent(sprite));
     fish.addComponent(new MovementComponent(speed, direction));
-    fish.addComponent(
-      new WaveMovementComponent(
-        20 + Math.random() * 30, // amplitude
-        0.002 + Math.random() * 0.002, // frequency
-        y, // initialY
-      ),
-    );
+    fish.addComponent(new WaveMovementComponent(amplitude, frequency, y));
 
     entities.push(fish);
   }
 
-  private setupInteractiveEvents(sprite: Phaser.GameObjects.Sprite): void {
+  private setupInteractiveEvents(
+    sprite: Phaser.GameObjects.Sprite,
+    fishType: FishType,
+  ): void {
+    const originalScale = sprite.scale;
+
     // Efecto hover
     sprite.on('pointerover', () => {
+      if (fishType.animations?.hover) {
+        this.scene.tweens.add({
+          targets: sprite,
+          scaleX: originalScale * fishType.animations.hover.scale,
+          scaleY: originalScale * fishType.animations.hover.scale,
+          duration: fishType.animations.hover.duration,
+          ease: 'Quad.easeOut',
+        });
+      }
       sprite.setTint(0xffffff);
       this.scene.game.canvas.style.cursor = 'pointer';
     });
 
     sprite.on('pointerout', () => {
+      if (fishType.animations?.hover) {
+        this.scene.tweens.add({
+          targets: sprite,
+          scaleX: originalScale,
+          scaleY: originalScale,
+          duration: fishType.animations.hover.duration,
+          ease: 'Quad.easeOut',
+        });
+      }
       sprite.clearTint();
       this.scene.game.canvas.style.cursor = 'default';
     });
 
     // Efecto click
     sprite.on('pointerdown', () => {
-      this.scene.tweens.add({
-        targets: sprite,
-        scaleX: sprite.scaleX * 1.2,
-        scaleY: sprite.scaleY * 1.2,
-        duration: 100,
-        yoyo: true,
-        onComplete: () => {
-          // Opcional: Añadir algún efecto adicional al completar
-          console.log('Click animation complete');
-        },
-      });
+      if (fishType.animations?.click) {
+        this.scene.tweens.add({
+          targets: sprite,
+          scaleX: originalScale * fishType.animations.click.scale,
+          scaleY: originalScale * fishType.animations.click.scale,
+          duration: fishType.animations.click.duration,
+          yoyo: true,
+          ease: 'Bounce.easeOut',
+          onComplete: () => {
+            // Opcional: Añadir efectos de partículas
+            // this.createClickParticles(sprite.x, sprite.y, fishType);
+          },
+        });
+      }
+    });
+  }
+
+  private createClickParticles(x: number, y: number, fishType: FishType): void {
+    const particles = this.scene.add.particles(x, y, 'particle', {
+      speed: { min: 50, max: 100 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 0.6, end: 0 },
+      tint: fishType.tint || 0xffffff,
+      quantity: 8,
+      lifespan: 500,
+      blendMode: 'ADD',
+    });
+
+    this.scene.time.delayedCall(500, () => {
+      particles.destroy();
     });
   }
 }

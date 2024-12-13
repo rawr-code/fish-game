@@ -6,12 +6,8 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
   width: 918,
   height: 515,
   backgroundColor: '#4bb3fd',
-  spawnInterval: 100,
+  spawnInterval: 500,
   debugSprites: false,
-  fishSpeed: {
-    min: 1,
-    max: 3,
-  },
 };
 
 export const defaultGameConfig: Phaser.Types.Core.GameConfig = {
