@@ -1,1 +1,2 @@
-export { default as ASSETS } from './assets';
+export * from './ASSETS';
+export * from './FISH_DATA';

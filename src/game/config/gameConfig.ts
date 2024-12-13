@@ -6,7 +6,8 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
   width: 918,
   height: 515,
   backgroundColor: '#4bb3fd',
-  spawnInterval: 2000,
+  spawnInterval: 100,
+  debugSprites: false,
   fishSpeed: {
     min: 1,
     max: 3,
@@ -17,6 +18,11 @@ export const defaultGameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: DEFAULT_GAME_CONFIG.width,
   height: DEFAULT_GAME_CONFIG.height,
+  render: {
+    pixelArt: true,
+    antialias: false,
+    roundPixels: true,
+  },
   physics: {
     default: 'arcade',
     arcade: {

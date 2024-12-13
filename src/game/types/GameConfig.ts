@@ -4,6 +4,7 @@ export interface GameConfig {
   height: number;
   backgroundColor: string;
   spawnInterval: number;
+  debugSprites: boolean;
   fishSpeed: {
     min: number;
     max: number;
