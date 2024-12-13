@@ -1,10 +1,22 @@
 import { MainScene, PreloadScene } from '@scenes';
-import frameConfig from './frameConfig';
+import { GameConfig } from '@types';
 
-const GameConfig: Phaser.Types.Core.GameConfig = {
+export const DEFAULT_GAME_CONFIG: GameConfig = {
+  canvasID: 'game-container',
+  width: 918,
+  height: 515,
+  backgroundColor: '#4bb3fd',
+  spawnInterval: 2000,
+  fishSpeed: {
+    min: 1,
+    max: 3,
+  },
+};
+
+export const defaultGameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: frameConfig.width,
-  height: frameConfig.height,
+  width: DEFAULT_GAME_CONFIG.width,
+  height: DEFAULT_GAME_CONFIG.height,
   physics: {
     default: 'arcade',
     arcade: {
@@ -13,7 +25,5 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
     },
   },
   scene: [PreloadScene, MainScene],
-  backgroundColor: '#4488AA',
+  backgroundColor: DEFAULT_GAME_CONFIG.backgroundColor,
 };
-
-export default GameConfig;

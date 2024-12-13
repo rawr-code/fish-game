@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
-import { frameConfig } from '@config';
+import { ASSETS } from '@constants';
+import { DEFAULT_GAME_CONFIG } from '@config';
 
 class PreloadScene extends Scene {
   constructor() {
@@ -7,7 +8,7 @@ class PreloadScene extends Scene {
   }
 
   preload(): void {
-    const x = frameConfig.width / 2;
+    const x = DEFAULT_GAME_CONFIG.width / 2;
     const padding = 10;
 
     // Mostrar barra de carga
@@ -29,9 +30,9 @@ class PreloadScene extends Scene {
     });
 
     this.load.multiatlas(
-      'assets',
-      'assets/fish-pack/fish-pack.json',
-      'assets/fish-pack',
+      ASSETS.ATLAS.KEY,
+      ASSETS.ATLAS.FILE,
+      ASSETS.ATLAS.TEXTURE,
     );
   }
 
