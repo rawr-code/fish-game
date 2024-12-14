@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 
-const generateBackgroundGradient = (scene: Scene) => {
+export const generateBackgroundGradient = (scene: Scene) => {
   const width = scene.cameras.main.width;
   const height = scene.cameras.main.height;
 
@@ -26,5 +26,3 @@ const generateBackgroundGradient = (scene: Scene) => {
   scene.textures.addCanvas('background', canvas);
   scene.add.image(width / 2, height / 2, 'background');
 };
-
-export default generateBackgroundGradient;

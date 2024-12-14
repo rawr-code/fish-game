@@ -1,4 +1,4 @@
-export const ASSETS = {
+export const Assets = {
   ATLAS: {
     KEY: 'fish-pack',
     FILE: 'assets/fish-pack/fish-pack.json',

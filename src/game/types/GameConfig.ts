@@ -4,5 +4,7 @@ export interface GameConfig {
   height: number;
   backgroundColor: string;
   spawnInterval: number;
+  poolSize: number;
+  maxPoolSize: number;
   debugSprites: boolean;
 }

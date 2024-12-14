@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { ASSETS } from '@constants';
+import { Assets } from '@constants';
 import { DEFAULT_GAME_CONFIG } from '@config';
 
 class PreloadScene extends Scene {
@@ -30,9 +30,9 @@ class PreloadScene extends Scene {
     });
 
     this.load.multiatlas(
-      ASSETS.ATLAS.KEY,
-      ASSETS.ATLAS.FILE,
-      ASSETS.ATLAS.TEXTURE,
+      Assets.ATLAS.KEY,
+      Assets.ATLAS.FILE,
+      Assets.ATLAS.TEXTURE,
     );
   }
 
