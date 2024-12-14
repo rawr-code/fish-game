@@ -1,6 +1,9 @@
-import { IGameEvent, IEventComponent } from '@types';
+import { IGameEvent } from '@types';
+import { Component } from './Component';
 
-export class EventComponent implements IEventComponent {
+export class EventComponent implements Component {
+  public readonly type = 'event';
+
   events: IGameEvent[];
 
   constructor() {

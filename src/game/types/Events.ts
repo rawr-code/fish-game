@@ -1,6 +1,7 @@
 export enum EGameEventType {
   UPDATE_SPAWN_TIME = 'UPDATE_SPAWN_TIME',
   UPDATE_DIFFICULTY = 'UPDATE_DIFFICULTY',
+  TOGGLE_PAUSE = 'TOGGLE_PAUSE',
 }
 
 export interface UpdateSpawnTimeEvent {
@@ -13,7 +14,15 @@ export interface UpdateDifficultyEvent {
   payload: 'easy' | 'normal' | 'hard';
 }
 
-export type TGameEvent = UpdateSpawnTimeEvent | UpdateDifficultyEvent;
+export interface TogglePauseEvent {
+  type: EGameEventType.TOGGLE_PAUSE;
+  payload: boolean; // true para pausar, false para reanudar
+}
+
+export type TGameEvent =
+  | UpdateSpawnTimeEvent
+  | UpdateDifficultyEvent
+  | TogglePauseEvent;
 
 export type TPayloadType<T extends EGameEventType> = Extract<
   TGameEvent,

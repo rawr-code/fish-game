@@ -8,7 +8,6 @@ export class EventSystem {
     this.eventHandlers = new Map();
   }
 
-  // Ahora el handler está tipado correctamente según el tipo de evento
   on<T extends EGameEventType>(
     eventType: T,
     handler: (payload: TPayloadType<T>) => void,

@@ -13,7 +13,10 @@ class MainScene extends Phaser.Scene {
   private spawnSystem: SpawnSystem;
   private poolingSystem: PoolingSystem;
   private config: GameConfig;
+
   private fpsText: Phaser.GameObjects.Text;
+  private isPaused: boolean = false;
+  private pauseText: Phaser.GameObjects.Text;
 
   constructor(config: GameConfig = DEFAULT_GAME_CONFIG) {
     super({ key: 'MainScene' });
@@ -26,14 +29,27 @@ class MainScene extends Phaser.Scene {
       onUpdateSpawnTime: time => {
         this.spawnSystem.updateSpawnTime(time);
       },
+      onTogglePause: isPaused => {
+        this.handlePause(isPaused);
+      },
     });
+
+    this.pauseText = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.centerY, 'PAUSA', {
+        fontSize: '64px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 20, y: 10 },
+      })
+      .setOrigin(0.5)
+      .setDepth(1000)
+      .setVisible(false);
 
     // Inicializar sistemas
     this.poolingSystem = new PoolingSystem(this, true);
 
     // Inicializar pools para cada tipo de pez
     FISH_TYPES.forEach(fishType => {
-      console.log(`Initializing pool for ${fishType.key}`);
       this.poolingSystem.initializePool(fishType, DEFAULT_GAME_CONFIG.poolSize);
     });
 
@@ -55,6 +71,10 @@ class MainScene extends Phaser.Scene {
     // Actualizar FPS actual
     const fps = Math.floor(this.game.loop.actualFps); // Obtener el FPS actual
     this.fpsText.setText(`FPS: ${fps}`);
+
+    if (this.isPaused) {
+      return; // No actualizar nada si el juego está pausado
+    }
 
     this.movementSystem.update(this.entities, delta);
     this.spawnSystem.update(this.entities, delta);
@@ -80,6 +100,47 @@ class MainScene extends Phaser.Scene {
       }
       return true;
     });
+  }
+
+  private handlePause(shouldPause: boolean) {
+    this.isPaused = shouldPause;
+
+    // Pausar/reanudar todos los timers
+    if (shouldPause) {
+      if (this.spawnSystem) {
+        this.spawnSystem.updateSpawnTime(0);
+      }
+    } else {
+      if (this.spawnSystem) {
+        this.spawnSystem.updateSpawnTime(DEFAULT_GAME_CONFIG.spawnInterval);
+      }
+    }
+
+    // Mostrar/ocultar texto de pausa
+    if (this.pauseText) {
+      this.pauseText.setVisible(shouldPause);
+    }
+
+    // Efecto visual de oscurecimiento durante la pausa
+    if (shouldPause) {
+      this.add
+        .rectangle(
+          0,
+          0,
+          this.cameras.main.width,
+          this.cameras.main.height,
+          0x000000,
+          0.3,
+        )
+        .setOrigin(0)
+        .setDepth(999)
+        .setName('pauseOverlay');
+    } else {
+      const overlay = this.children.getByName('pauseOverlay');
+      if (overlay) {
+        overlay.destroy();
+      }
+    }
   }
 }
 
