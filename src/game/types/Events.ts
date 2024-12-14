@@ -1,7 +1,10 @@
+import { EFishColor } from './Speech';
+
 export enum EGameEventType {
   UPDATE_SPAWN_TIME = 'UPDATE_SPAWN_TIME',
   UPDATE_DIFFICULTY = 'UPDATE_DIFFICULTY',
   TOGGLE_PAUSE = 'TOGGLE_PAUSE',
+  COUNT_FISH = 'COUNT_FISH',
 }
 
 export interface UpdateSpawnTimeEvent {
@@ -19,10 +22,19 @@ export interface TogglePauseEvent {
   payload: boolean; // true para pausar, false para reanudar
 }
 
+export interface CountFishEvent {
+  type: EGameEventType.COUNT_FISH;
+  payload: {
+    color: EFishColor;
+    expectedCount: number;
+  };
+}
+
 export type TGameEvent =
   | UpdateSpawnTimeEvent
   | UpdateDifficultyEvent
-  | TogglePauseEvent;
+  | TogglePauseEvent
+  | CountFishEvent;
 
 export type TPayloadType<T extends EGameEventType> = Extract<
   TGameEvent,

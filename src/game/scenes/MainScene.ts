@@ -1,7 +1,7 @@
 import { Entity } from '@entities';
-import { GameConfig } from '@types';
+import { EFishColor, GameConfig } from '@types';
 import { MovementSystem, PoolingSystem, SpawnSystem } from '@systems';
-import { SpriteComponent } from '@components';
+import { PoolComponent, SpriteComponent } from '@components';
 import { DEFAULT_GAME_CONFIG } from '@config';
 import { generateBackgroundGradient } from '@utils';
 import { FISH_TYPES } from '../constants';
@@ -17,6 +17,7 @@ class MainScene extends Phaser.Scene {
   private fpsText: Phaser.GameObjects.Text;
   private isPaused: boolean = false;
   private pauseText: Phaser.GameObjects.Text;
+  private isProcessingVoiceCommand: boolean = false;
 
   constructor(config: GameConfig = DEFAULT_GAME_CONFIG) {
     super({ key: 'MainScene' });
@@ -31,6 +32,9 @@ class MainScene extends Phaser.Scene {
       },
       onTogglePause: isPaused => {
         this.handlePause(isPaused);
+      },
+      countVisibleFish: (color, expectedCount) => {
+        this.processVoiceCommand(color, expectedCount);
       },
     });
 
@@ -72,7 +76,7 @@ class MainScene extends Phaser.Scene {
     const fps = Math.floor(this.game.loop.actualFps); // Obtener el FPS actual
     this.fpsText.setText(`FPS: ${fps}`);
 
-    if (this.isPaused) {
+    if (this.isPaused || this.isProcessingVoiceCommand) {
       return; // No actualizar nada si el juego está pausado
     }
 
@@ -140,6 +144,110 @@ class MainScene extends Phaser.Scene {
       if (overlay) {
         overlay.destroy();
       }
+    }
+  }
+
+  private getVisibleFishByColor(color: EFishColor) {
+    const fishOfColor = Array.from(this.entities.values()).filter(entity => {
+      const poolComponent = entity.getComponent<PoolComponent>('pool');
+      if (!poolComponent) return false;
+
+      return poolComponent.fishType === color;
+    });
+
+    return fishOfColor;
+  }
+
+  // Método opcional para resaltar visualmente los peces encontrados
+  private highlightFoundFish(entities: Entity[]) {
+    return new Promise<void>(resolve => {
+      // Guardar el tint original de cada pez
+      const originalTints = new Map<string, number>();
+
+      entities.forEach(entity => {
+        const fish = entity.getComponent<SpriteComponent>('sprite');
+
+        if (!fish) return;
+
+        originalTints.set(entity.id, fish.sprite.tint);
+        // Aplicar un efecto de brillo
+        fish.sprite.setTint(0xfffff);
+
+        // Crear un efecto de partículas o resplandor alrededor del pez
+        this.createHighlightEffect(entity);
+      });
+
+      // Restaurar el tint original después de un tiempo
+      this.time.delayedCall(1000, () => {
+        entities.forEach(entity => {
+          const fish = entity.getComponent<SpriteComponent>('sprite');
+
+          if (!fish) return;
+
+          const originalTint = originalTints.get(entity.id);
+          if (originalTint) {
+            fish.sprite.setTint(originalTint);
+          }
+        });
+        resolve();
+      });
+    });
+  }
+
+  private createHighlightEffect(entity: Entity) {
+    const fish = entity.getComponent<SpriteComponent>('sprite');
+
+    if (!fish) return;
+
+    // Crear un círculo de resplandor alrededor del pez
+    const highlight = this.add.circle(
+      fish.sprite.x,
+      fish.sprite.y,
+      fish.sprite.width / 1.5,
+      0xffffff,
+      0.3,
+    );
+    highlight.setDepth(fish.sprite.depth - 1);
+
+    // Animar el resplandor
+    this.tweens.add({
+      targets: highlight,
+      scale: 1.5,
+      alpha: 0,
+      duration: 500,
+      repeat: 1,
+      ease: 'Power2',
+      onComplete: () => {
+        highlight.destroy();
+      },
+    });
+  }
+
+  private async processVoiceCommand(color: EFishColor, expectedCount: number) {
+    if (this.isProcessingVoiceCommand) {
+      return; // Evitar procesamiento simultáneo de comandos
+    }
+
+    try {
+      this.isProcessingVoiceCommand = true;
+
+      // Tomar una "snapshot" de los peces actuales
+      const snapshot = this.getVisibleFishByColor(color);
+      const actualCount = snapshot.length;
+
+      console.log({
+        color,
+        expectedCount,
+        actualCount,
+      });
+
+      // Mostrar el resultado y resaltar los peces
+      if (actualCount === expectedCount) {
+        await this.highlightFoundFish(snapshot);
+      }
+    } finally {
+      // Asegurarnos de que siempre se restaure el estado
+      this.isProcessingVoiceCommand = false;
     }
   }
 }
