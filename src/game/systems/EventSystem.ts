@@ -1,4 +1,4 @@
-import { IGameEvent, EGameEventType, TPayloadType } from '@types';
+import { EGameEventType, TGameEvent, TPayloadType } from '@types';
 
 export class EventSystem {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -8,6 +8,7 @@ export class EventSystem {
     this.eventHandlers = new Map();
   }
 
+  // Ahora el handler está tipado correctamente según el tipo de evento
   on<T extends EGameEventType>(
     eventType: T,
     handler: (payload: TPayloadType<T>) => void,
@@ -18,7 +19,7 @@ export class EventSystem {
     this.eventHandlers.get(eventType)?.push(handler);
   }
 
-  emit(event: IGameEvent) {
+  emit(event: TGameEvent) {
     const handlers = this.eventHandlers.get(event.type);
     if (handlers) {
       handlers.forEach(handler => handler(event.payload));
@@ -29,24 +30,3 @@ export class EventSystem {
     this.eventHandlers.clear();
   }
 }
-
-export const eventSystem = new EventSystem();
-
-interface ISetupEventListeners {
-  onUpdateSpawnTime: (time: number) => void;
-}
-
-export const setupEventListeners = ({
-  onUpdateSpawnTime,
-}: ISetupEventListeners) => {
-  eventSystem.on(EGameEventType.UPDATE_SPAWN_TIME, time => {
-    onUpdateSpawnTime(time);
-  });
-};
-
-export const updateSpawnTime = (time: number) => {
-  eventSystem.emit({
-    type: EGameEventType.UPDATE_SPAWN_TIME,
-    payload: time,
-  });
-};

@@ -40,4 +40,8 @@ export class SpawnSystem extends System {
       entities.push(fish);
     }
   }
+
+  public updateSpawnTime(time: number): void {
+    this.config.spawnInterval = time;
+  }
 }

@@ -6,7 +6,7 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
   width: 918,
   height: 515,
   backgroundColor: '#4bb3fd',
-  spawnInterval: 500,
+  spawnInterval: 1000,
   poolSize: 10,
   maxPoolSize: 100,
   debugSprites: false,
